@@ -13,7 +13,7 @@
     </style>
       </head>
   <body>
-  	<h3>QuakeShake Pub powered by Azure</h3>
+  	<h3>QuickShake ride the wave</h3>
     <strong>Data:</strong><br>
     sta: <div id='sta'></div><br>
     from: <div id='from'></div><br>
@@ -27,7 +27,6 @@
         document.getElementById('to').innerHTML = StrToTime(data.endtime);
       }
       var host = window.document.location.host.replace(/:.*/, '');
-      //var wsurl = 'ws://quakeshakepub.azurewebsites.net:80';
       var wsurl = 'ws://' + host + (location.port ? ':'+location.port : '');
       var ws = new WebSocket(wsurl);
       ws.onmessage = function (event) {

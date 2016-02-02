@@ -2,43 +2,36 @@
 //and stuff into mongodb 
 //ALL EPOCH TIMES ARE MILLISECONDS!!!!
 
-var Waveserver = require("./lib/waveserver.js"),
-    ArchiveScnls = require("./config.js"), //config file
-    MongoClient  = require('mongodb').MongoClient,
-    assert = require('assert');
-// var monk = require('monk');
-// var db = monk(conf.mongoHost + ":" + conf.mongoPort + "/" + conf.mongodbName );
+var Waveserver = require("../lib/waveserver.js"),
+assert = require('assert');
+var Scnl = require('../lib/scnl.js');
+
 
 //get configs
-var conf = new ArchiveScnls();
-var scnls = conf.scnls,
-    waveHost = conf.waveHost,
-    wavePort = conf.wavePort;
+var  scnls = [
+            new Scnl({sta: 'OCP', chan: 'HNZ', net: 'UW', loc: '--'})
+            //new Scnl({sta: 'BROK', chan: 'HNZ', net: 'UW', loc: '--'}),
+            //new Scnl({sta: 'CORE', chan: 'HNZ', net: 'UW', loc: '--'})
+           ];
+    waveHost = "products01.ess.washington.edu"
+    wavePort = 16021;
 
 
 
 var daemon, start, stop;
-//daemon mode will run indefinetly with current data
-//daemon is assumed if stop is blank
-if(conf.stop ===null){
-  daemon = true;
-  stop = Date.now();
-  start = stop - 1000; //1 second
-}else{
-  daemon = false;
-  start = conf.start;
-  stop =  conf.stop;
-}
 
-//Connect to Mongo
-var url = "mongodb://" + conf.mongPort + ":" + conf.mongoHost + "/" + conf.mongodbName;
+daemon = true;
+stop = Date.now()-1000;
+start = stop - 1000; //1 second
+
+
 
 
 var scnlIndex = 0;
 // main function
 function getData(scnl){
   console.log('getData called');
-  if(scnl.lastBufStart === null){
+  if(scnl.lastBufStart === null){ //beginning of 
     scnl.lastBufStart = start;
   }
   if(daemon){
@@ -51,7 +44,7 @@ function getData(scnl){
 
   //parse getScnlRaw flag and decide whether to disconnect or continue
   ws.on('header', function(header){
-    responseHeader = header;
+    console.log("header")
     if (header.flag ==="FR"){ //most common error missed by current data not in ws yet
       ws.disconnect();
       console.log("Wave ERROR: FR (Current data not in Wave yet)");
@@ -62,23 +55,12 @@ function getData(scnl){
   });
 
   ws.on('data', function(message){
-    var scnl = findScnl(message);
+    var scnl = findScnl(message); 
     if(message.starttime > scnl.lastBufStart){
       scnl.lastBufStart = message.starttime;
-      // console.log(MongoClient);
-      MongoClient.connect(url, function(err, db){
-        // var obj = {};
-        // assert.equal(obj, err);
-        console.log("connected to mongodb yo!");      
-        // console.log(db);
-        //insert into monogodb
-        //JSON.stringify(message)
-        insertDocuments(db, db.collection(makeScnlKey(scnl), message), function() {
-          db.close();
-        });
-      });
-      
-      
+      // var json = JSON.stringify(message);
+      var json = message
+      console.log(json);
       console.log("from=" + message.sta + ":" + message.chan + ":" + message.net + ":" + message.loc + " length=" + 
                   message.data.length + " start=" + strToTime(message.starttime) + " end=" + strToTime(message.endtime));
     }
@@ -110,13 +92,8 @@ function getData(scnl){
 var end = Date.now();
 getData(scnls[0]);
 
-// // ECONNREFUSED just in case - try to reconnect
-// process.on('uncaughtException', function(err) {
-//   // try to reconnect
-//   if(err.code == 'ECONNREFUSED'){
-//     setTimeout(getData(scnls[0]), 5000);
-//   }
-// });
+
+
 
 
 /* FUNCTIONS */
@@ -135,19 +112,7 @@ function findScnl(msg){
   return scnl;
 }
 
-// function printClientCount() {
-//   console.log('Total Connected Clients:  ' + this.Object.size(allSocks));
-//   console.log('Total Clients (lifetime): ' + connectionIDCounter);
-// }
-// 
-// function printClientStatus(ws, status) {
-//   console.log(new Date() + ' Client ' + status + ' id: ' + ws.id + ' IP: '+ ws.IP);
-// }
-// 
-// function printSourceStatus(status) {
-//   console.log(new Date() + ' ' + status + ' from: ' + config.sourceSocket);
-// }
-// 
+
 function strToTime(unix_timestamp) {
   var date = new Date(unix_timestamp);
   var year =  date.getFullYear();
@@ -163,21 +128,11 @@ function strToTime(unix_timestamp) {
           seconds.substr(seconds.length-2) + '.' + ms.substr(ms.length-3);
 }
 
-var insertDocuments = function(db, collection, message, message) {
-  // Get the documents collection
-  // Insert some documents
-  collection.insert(message, function(err, result) {
-    assert.equal(err, null);
-    assert.equal(3, result.result.n);
-    assert.equal(3, result.ops.length);
-    console.log("Inserted 3 documents into the document collection");
-    callback(result);
-  });
-};
 
 
 function makeScnlKey(scnl){
-  return  scnl.sta.toLowerCase() + "_" + scnl.chan.toLowerCase() + "_" + scnl.net.toLowerCase()  + "_" +  scnl.loc.toLowerCase();
+  var loc = scnl.loc == "--" ? "" : "_" + scnl.loc;
+  return  scnl.sta.toLowerCase() + "_" + scnl.chan.toLowerCase() + "_" + scnl.net.toLowerCase()  + loc ;
 };
 
 

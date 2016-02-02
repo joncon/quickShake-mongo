@@ -1,5 +1,5 @@
 #quickShake-mongo
-quakeShake-mongo is a Node.js app designed to connect to a variety of binary seismic trace data, convert it to JSON and save to a mongodb
+quickShake-mongo is a Node.js app designed to connect to a variety of binary seismic trace data, convert it to JSON and save to a mongodb
 
 
 #Data Types
@@ -21,7 +21,7 @@ net = network
 loc = location
 flag = it consists of the letter F followed by zero or more letters. A space terminates the flags. The bare letter F by itself means that the requested data was returned; there may be gaps in the data but it is up to the client to detect those. Currently "FR", "FL", and "FG" are implemented to indicate that the request totally missed the tank. "FL" means that the requested interval was before anything in the tank; "FR" means the requested interval was after anything in the tank. "FG" is used to indicate that the requested interval fell wholy within a gap in the tank.
 dataytpe = only i2, i4, s2, and s4 are implemented. i means Intel byte order; s means Sparc byte order; 2 and 4 meaning two- four-byte signed integer.
-bytes to follow = number of byest of data to follow for a given request Intel = little Endian
+bytes to follow = number of bytes of data to follow for a given request Intel = little Endian
 </pre>
 
 ###Examples

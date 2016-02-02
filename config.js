@@ -3,23 +3,58 @@
 var Scnl = require('./lib/scnl.js');
 
 
-function ArchiveScnls(){
-  //must have a startime
-  this.start = 1421652510000;
-  //mark stop as null if you want to run in daemon mode 
-  this.stop = this.start*3*60*1000;
+function Conf(){
   this.waveHost = "products01.ess.washington.edu";
-  this.wavePort = 16017;
-  this.mongoHost = "localhost";
+  this.wavePort = 16021;
+  this.mongoHost = "quickShake-mongo";
   this.mongoPort = 27017;
-  this.mongodbName = "hawks";
+  this.mongodbName = "pnsn_waveforms";
   //all channels you want to archive
-  this.scnls = [
-                new Scnl({sta: 'HWK1', chan: 'HNZ', net: 'UW', loc: '--'}),
-                new Scnl({sta: 'HWK2', chan: 'HNZ', net: 'UW', loc: '01'}),
-                new Scnl({sta: 'HWK3', chan: 'HNZ', net: 'UW', loc: '--'})
-                ];
+  this.channels=["YACH.HNZ.UW.--",
+                 "WISH.ENZ.UW.--",
+                 "WEDR.HNZ.UW.--",
+                 "TILL.HNZ.UW.--",
+                 "TAHO.HNZ.UW.--",
+                 "RSLG.HNZ.UW.--",
+                 "ROBC.HNZ.UW.--",
+                 "RADR.ENZ.UW.--",
+                 "OSD.ENZ.UW.--",
+                 "OOW2.HNZ.UW.--",
+                 "ONAB.HNZ.UW.--",
+                 "OCP.HNZ.UW.--",
+                 "OCEN.HNZ.UW.--",
+                 "MKAH.HNZ.UW.--",
+                 "LWCK.HNZ.UW.--",
+                 "JEDS.ENZ.UW.--",
+                 "FORK.ENZ.UW.--",
+                 "FLRE.HNZ.UW.--",
+                 "CORE.HNZ.UW.--",
+                 "COOS.HNZ.UW.--",
+                 "CNNB.HNZ.UW.--",
+                 "CHZZ.HNZ.UW.--",
+                 "CABL.HNZ.UW.--",
+                 "BROK.HNZ.UW.--",
+                 "BILS.HNZ.UW.--",
+                 "BAND.HNZ.UW.--",
+                 "BABR.ENZ.UW.--"
+  ]
+  this.scnls = [];
+  for(var i =0; i< this.channels.length; i++){
+    channel=this.channels[i].split(".");
+    this.scnls.push(new Scnl({sta: channel[0], chan: channel[1], net: channel[2], loc: channel[3]}))
+  }
+ 
+ // this.scnls = [
+ //            new Scnl({sta: 'JEDS', chan: 'ENZ', net: 'UW', loc: '--'}),
+ //            new Scnl({sta: 'BABR', chan: 'ENZ', net: 'UW', loc: '--'}),
+ //            new Scnl({sta: 'OSD', chan: 'ENZ', net: 'UW', loc: '--'}),
+ //            new Scnl({sta: 'OCP', chan: 'HNZ', net: 'UW', loc: '--'}),
+ //            new Scnl({sta: 'BROK', chan: 'HNZ', net: 'UW', loc: '--'}),
+ //            new Scnl({sta: 'CORE', chan: 'HNZ', net: 'UW', loc: '--'})
+ //           ];
+ 
+  
+               
              
 }
-
-module.exports = ArchiveScnls;
+module.exports = Conf;

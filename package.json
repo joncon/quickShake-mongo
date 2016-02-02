@@ -1,15 +1,30 @@
 {
-  "name": "quick_tank",
-  "version": "1.0.0",
-  "description": "QuakeShake Pub Side (different implementations with Redis/Websockets/etc)",
+  "name": "quickShake-mongo",
+  "version": "0.0.1",
+  "description": "QuickShake mongo routine for populating db",
   "main": "app.js",
   "dependencies": {
-    "bl": "^0.9.3"
+    "bl": "latest", 
+    "mongodb": "latest", 
+    "mongoose": "latest", 
+    "bson": "latest", 
+    "ssh2": "latest"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "BSD"
+  "author": "Jon Connolly",
+  "license": "GPL",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/joncon/quickShake-mongo.git"
+  },
+  "keywords": [
+    "quickshake",
+    "mongodb"
+  ],
+  "bugs": { 
+    "url": "https://github.com/joncon/quickShake-mongo/issues"
+  }
 }
